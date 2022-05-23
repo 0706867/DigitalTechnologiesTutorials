@@ -5,8 +5,10 @@ var topic = Global.topic
 var csv = "res://Q1.txt"
 var correct = ""
 var arr_pos
-var menu = preload("res://Button_Menu.gd")
-var menu_script = menu.new()
+var menu = load("res://Button_Menu.gd").new()
+var popup = preload("res://Popup_menu.tscn")
+var pop_loc = Vector2(350,200)
+
 
 func _ready():
 	for button in $VBoxContainer/Navigation/Buttons.get_children():
@@ -20,7 +22,7 @@ func _ready():
 	
 	# Update the UI with the current Score
 	$VBoxContainer/Navigation/Label.text = str(Global.playerScore)
-	print(stage)
+	print(str(stage) + "stage")
 
 func _on_Button_pressed(button, scene_to_load):
 	if button.text == "Back" and stage != 0:
@@ -68,11 +70,20 @@ func load_csv():
 
 func _Correct(btn):
 	if btn.text == correct:
-		get_tree().change_scene("res://Number systems/Information.tscn")
 		Global.stage +=1
+		get_tree().change_scene("res://Number systems/Information.tscn")
 	if btn.text != correct:
-		Global.incorrectCounter +=1
-	if Global.answered[int(arr_pos)] == 0:
-		Global.increaseScore(Global.scoreMultiplier[Global.incorrectCounter])
-		Global.incorrectCounter = 0
-		Global.answered[int(arr_pos)] = 1
+		Global.incorrectCounter += 1
+		var pop = popup.instance()
+		get_tree().get_root().get_node(".").add_child(pop)
+		pop.set_global_position(pop_loc)
+		if Global.answered[int(arr_pos)] == 0:
+			Global.increaseScore(Global.scoreMultiplier[Global.incorrectCounter])
+			Global.incorrectCounter = 0
+			Global.answered[int(arr_pos)] = 1
+		else:
+			Global.incorrectCounter = 0
+		print(str(Global.incorrectCounter) + "incorrect")
+
+
+
